@@ -1,0 +1,68 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.33.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 95e55181240d95aff6b981ac9336b112c66e60e76b5bda264ef201605cdcf4d7
+
+name:           simple-language
+version:        0.1.0.0
+description:    Please see the README on GitHub at <https://github.com/coreygirard/simple-language#readme>
+homepage:       https://github.com/coreygirard/simple-language#readme
+bug-reports:    https://github.com/coreygirard/simple-language/issues
+author:         Corey Girard
+maintainer:     corey.r.girard@gmail.com
+copyright:      Corey Girard
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/coreygirard/simple-language
+
+library
+  exposed-modules:
+      Lib
+  other-modules:
+      Paths_simple_language
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , either
+    , parsec
+  default-language: Haskell2010
+
+executable simple-language-exe
+  main-is: Main.hs
+  other-modules:
+      Paths_simple_language
+  hs-source-dirs:
+      app
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , either
+    , parsec
+    , simple-language
+  default-language: Haskell2010
+
+test-suite simple-language-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_simple_language
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , either
+    , parsec
+    , simple-language
+  default-language: Haskell2010

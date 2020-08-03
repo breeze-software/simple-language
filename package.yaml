@@ -1,0 +1,50 @@
+name:                simple-language
+version:             0.1.0.0
+github:              "coreygirard/simple-language"
+license:             BSD3
+author:              "Corey Girard"
+maintainer:          "corey.r.girard@gmail.com"
+copyright:           "Corey Girard"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/coreygirard/simple-language#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- parsec
+- either
+
+library:
+  source-dirs: src
+
+executables:
+  simple-language-exe:
+    main:                Main.hs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - simple-language
+
+tests:
+  simple-language-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - simple-language
