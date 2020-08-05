@@ -3,9 +3,12 @@ import Data.Either.Combinators
 
 import Text.ParserCombinators.Parsec
 
-csvFile = endBy line eol
-line = sepBy cell (char ',')
-cell = many (noneOf ",\n")
+sourceFile = many f
+f = (string "fn") <|> (string " ")
+--sourceFile = endBy line eol
+--line = many (noneOf "\n")
+--line = sepBy cell (char '#')
+--cell = many (noneOf "#\n")
 
 eol =   try (string "\n\r")
     <|> try (string "\r\n")
@@ -13,8 +16,10 @@ eol =   try (string "\n\r")
     <|> string "\r"
     <?> "end of line"
 
-parseCSV :: String -> Either ParseError [[String]]
-parseCSV input = parse csvFile "(unknown)" input
+parseSource :: String -> Either ParseError [String]
+parseSource input = (parse sourceFile "" input)
+
+unwrap s = (show (fromRight' (parseSource s)))
 
 main :: IO ()
-main = putStrLn (unlines (map unlines (fromRight' (parseCSV "1,2,3\n4,5,6\n\n"))))
+main = putStrLn (unwrap "fn something(a, b, c):\n    return a + b * c\n")

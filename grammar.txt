@@ -1,0 +1,16 @@
+file = (import | function | blankline)* eof
+
+import = "import" + (whitespace)+ + word + eol
+
+function = "fn" + (whitespace)+ + word + "(" + func_args + "):" + eol + (line)*
+func_args = () | (whitespace* + word + whitespace* + ("," + whitespace* + word + whitespace*)*)
+
+line = assign | return
+return = (whitespace)* + "return" + (whitespace)+ + expr
+expr = plus | minus | mult | div | var
+plus = expr + (whitespace)* + "+" + (whitespace)* + expr
+var = word
+
+word = any("a-zA-Z0-9_")+
+blankline = (whitespace)* eol
+eol = ("\n" | "\r" | "\n\r" | "\r\n")
