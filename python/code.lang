@@ -1,0 +1,20 @@
+fn something(a, b, c):
+    c = a
+    c = 5
+    for i in something:
+        a = c
+    return c
+
+
+fn something_else(a, b):
+    return 4
+
+
+
+
+
+
+fn something_else_2(a, b):
+    return 4
+fn something_else_3(a, b):
+    return 4
