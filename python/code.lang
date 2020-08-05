@@ -1,6 +1,6 @@
 fn something(a, b, c):
     c = a
-    c = 5
+    c = 5 + 9
     for i in something:
         a = c
     return c
@@ -15,6 +15,9 @@ fn something_else(a, b):
 
 
 fn something_else_2(a, b):
-    return 4
+    if aaa:
+        a = b
+        return 7
+    return 444
 fn something_else_3(a, b):
     return 4

@@ -7,20 +7,24 @@ class SourceVisitor(NodeVisitor):
         return [v[1][0][0]] + [e[1] for e in v[1][0][1]]
 
     def visit_func_def(self, node, visited_children):
+        out = visited_children[0]
+        out["body"] = visited_children[4]
+        return out
+
+    def visit_func_signature(self, node, visited_children):
         return {
             "node": "function",
             "name": visited_children[2],
             "args": visited_children[5],
-            "body": visited_children[11],
         }
 
     def visit_line(self, node, visited_children):
         return visited_children[0]
 
-    def visit_return(self, node, visited_children):
+    def visit_stmt_return(self, node, visited_children):
         return {"node": "return", "from": visited_children[2][0]}
 
-    def visit_assign(self, node, visited_children):
+    def visit_stmt_assign(self, node, visited_children):
         return {
             "node": "assign",
             "to": visited_children[0],
@@ -32,8 +36,24 @@ class SourceVisitor(NodeVisitor):
             "node": "for",
             "var": visited_children[2],
             "iterator": visited_children[6],
-            "body": visited_children[12],
+            "body": visited_children[13],
         }
+
+    def visit_if(self, node, visited_children):
+        return {
+            "node": "if",
+            "condition": visited_children[2],
+            "body": visited_children[9],
+        }
+
+    def visit_func_args(self, node, visited_children):
+        """ Returns the overall output. """
+        v = visited_children
+        if len(v) == 0:
+            return []
+        elif len(v[0]) == 1:
+            return [v[0][0]]
+        return [v[0][0]] + [e[2] for e in v[0][1]]
 
     def visit_list_contents(self, node, visited_children):
         """ Returns the overall output. """
@@ -45,6 +65,16 @@ class SourceVisitor(NodeVisitor):
 
     def visit_int_literal(self, node, visited_children):
         return {"node": "literal", "value": int(node.text)}
+
+    def visit_expr_add_sub(self, node, visited_children):
+        return {
+            "node": visited_children[2][0],
+            "left": visited_children[0],
+            "right": visited_children[4],
+        }
+
+    def visit_add(self, node, visited_children):
+        return "+"
 
     def visit_comma(self, node, visited_children):
         return node.text

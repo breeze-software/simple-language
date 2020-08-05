@@ -1,15 +1,26 @@
 grammar = r"""
 source = eol* (func_def (eol* func_def)*)? eol*
-func_def = "fn" whitespace+ var whitespace* "(" list_contents "):" whitespace* eol indent eol line+ dedent eol
+func_def = func_signature eol indent eol body dedent eol
+func_signature = "fn" whitespace+ var whitespace* "(" func_args "):" whitespace*
 
-line = for / return / assign
+func_args = (var (comma whitespace* var whitespace*)*)?
 
-assign = var whitespace* "=" whitespace* expr eol
-return = "return" whitespace+ expr eol
 
-for = "for" whitespace+ var whitespace+ "in" whitespace+ var whitespace* ":" eol indent eol assign+ dedent eol
+body = (block / line)+
+block = for / if
+line = stmt_return / stmt_assign
 
-expr = value
+stmt_assign = assign_target whitespace* "=" whitespace* expr eol
+stmt_return = "return" whitespace+ expr eol
+
+for = "for" whitespace+ assign_target whitespace+ "in" whitespace+ var whitespace* ":" whitespace* eol indent eol body dedent eol
+if = "if" whitespace+ expr whitespace* ":" whitespace* eol indent eol body dedent eol
+
+assign_target = var
+
+expr = expr_add_sub / value
+
+expr_add_sub = value whitespace* (add / sub) whitespace* value whitespace*
 
 list = "[" whitespace* list_contents whitespace* "]"
 list_contents = (var (tail_arg)*)?
