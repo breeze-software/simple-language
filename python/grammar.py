@@ -5,7 +5,6 @@ func_signature = "fn" whitespace+ var whitespace* "(" func_args "):" whitespace*
 
 func_args = (var (comma whitespace* var whitespace*)*)?
 
-
 body = (block / line)+
 block = for / if
 line = stmt_return / stmt_assign
@@ -13,8 +12,19 @@ line = stmt_return / stmt_assign
 stmt_assign = assign_target whitespace* "=" whitespace* expr eol
 stmt_return = "return" whitespace+ expr eol
 
-for = "for" whitespace+ assign_target whitespace+ "in" whitespace+ var whitespace* ":" whitespace* eol indent eol body dedent eol
-if = "if" whitespace+ expr whitespace* ":" whitespace* eol indent eol body dedent eol
+for = for_signature eol indent eol body dedent eol
+for_signature = "for" whitespace+ assign_target whitespace+ "in" whitespace+ var whitespace* ":" whitespace*
+
+if = if_block elseif_block* else_block?
+
+if_block = if_signature eol indent eol body dedent eol
+if_signature = "if" whitespace+ expr whitespace* ":" whitespace*
+
+elseif_block = elseif_signature eol indent eol body dedent eol
+elseif_signature = "else if" whitespace+ expr whitespace* ":" whitespace*
+
+else_block = else_signature eol indent eol body dedent eol
+else_signature = "else" whitespace* ":" whitespace*
 
 assign_target = var
 

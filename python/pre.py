@@ -1,3 +1,4 @@
+# TODO: need to not insert brackets inside multi-line strings or expressions or whatever
 def insert_brackets(code):
     code = [""] + code.split("\n") + ["", ""]
 
@@ -16,4 +17,4 @@ def insert_brackets(code):
             out.append("}")
             indent_a -= 4
 
-    return "\n".join(out)
+    return ("\n".join(out)).lstrip("\n")

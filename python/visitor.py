@@ -18,6 +18,12 @@ class SourceVisitor(NodeVisitor):
             "args": visited_children[5],
         }
 
+    def visit_body(self, node, visited_children):
+        return visited_children[0]
+
+    def visit_block(self, _, visited_children):
+        return visited_children[0]
+
     def visit_line(self, node, visited_children):
         return visited_children[0]
 
@@ -28,23 +34,66 @@ class SourceVisitor(NodeVisitor):
         return {
             "node": "assign",
             "to": visited_children[0],
-            "from": visited_children[4][0],
+            "from": visited_children[4][0][0],
         }
 
     def visit_for(self, node, visited_children):
+        out = visited_children[0]
+        out["body"] = visited_children[4]
+        return out
+
+    def visit_for_signature(self, node, visited_children):
         return {
             "node": "for",
             "var": visited_children[2],
             "iterator": visited_children[6],
-            "body": visited_children[13],
         }
 
     def visit_if(self, node, visited_children):
-        return {
-            "node": "if",
-            "condition": visited_children[2],
-            "body": visited_children[9],
+        out = {
+            "node": "conditional",
+            "if": visited_children[0],
+            "else if": [],
+            "else": {"body": []},
         }
+        out["if"].pop("node")
+
+        children = []
+        for e in visited_children[1:]:
+            if isinstance(e, list):
+                children.extend(e)
+
+        for e in children:
+            node = e.pop("node")
+            if node == "else if":
+                out["else if"].append(e)
+            elif node == "else":
+                out["else"] = e
+        return out
+
+    def visit_if_block(self, node, visited_children):
+        out = visited_children[0]
+        out["body"] = visited_children[4]
+        return out
+
+    def visit_if_signature(self, node, visited_children):
+        return {"node": "if", "condition": visited_children[2][0][0]}
+
+    def visit_elseif_block(self, node, visited_children):
+        out = visited_children[0]
+        out["body"] = visited_children[4]
+        return out
+
+    def visit_elseif_signature(self, node, visited_children):
+        return {"node": "else if", "condition": visited_children[2][0][0]}
+
+    def visit_else_block(self, node, visited_children):
+        out = visited_children[0]
+        out["body"] = visited_children[4]
+        return out
+
+    def visit_else_signature(self, node, visited_children):
+        return {"node": "else"}
 
     def visit_func_args(self, node, visited_children):
         """ Returns the overall output. """

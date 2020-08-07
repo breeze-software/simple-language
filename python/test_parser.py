@@ -60,3 +60,16 @@ def test__function_signature__multiple_args():
     grammar = parser.read_grammar()
     output = parser.parse(grammar, data, entry="func_signature")
     assert output == expected
+
+
+def test__for_signature__basic():
+    data = "for a in b:"
+    expected = {
+        "iterator": {"name": "b", "node": "variable"},
+        "node": "for",
+        "var": {"name": "a", "node": "variable"},
+    }
+
+    grammar = parser.read_grammar()
+    output = parser.parse(grammar, data, entry="for_signature")
+    assert output == expected
