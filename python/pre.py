@@ -1,20 +1,33 @@
 # TODO: need to not insert brackets inside multi-line strings or expressions or whatever
-def insert_brackets(code):
-    code = [""] + code.split("\n") + ["", ""]
 
+
+def split_indent(source):
+    return [(len(line) - len(line.lstrip(" ")), line.lstrip(" ")) for line in source]
+
+
+def insert_brackets_helper(source):
+    source = source.strip("\n")
+    source = source.replace("\t", " " * 4)
+    source = source.split("\n")
+
+    stack = [0]
     out = []
-    for a, b in zip(code, code[1:]):
-        a = a.replace("\t", "    ")
-        b = b.replace("\t", "    ")
-        indent_a = len(a) - len(a.lstrip(" "))
-        indent_b = len(b) - len(b.lstrip(" "))
+    for i, s in split_indent(source):
+        if i > stack[-1]:
+            yield "{"
+            stack.append(i)
+        else:
+            while i < stack[-1]:
+                yield "}"
+                stack.pop()
 
-        out.append(a.lstrip(" "))
-        while indent_a < indent_b:
-            out.append("{")
-            indent_b -= 4
-        while indent_b < indent_a:
-            out.append("}")
-            indent_a -= 4
+        yield s
 
-    return ("\n".join(out)).lstrip("\n")
+    yield from ["}"] * len(stack[1:])
+    yield "\n"
+
+
+def insert_brackets(source):
+    if "\n" not in source and not (source.startswith(" ") or source.startswith("\t")):
+        return source
+    return "\n".join(insert_brackets_helper(source))

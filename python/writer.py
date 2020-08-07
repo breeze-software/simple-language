@@ -26,16 +26,31 @@ def scribe_assign(tree, indent):
     yield "\n"
 
 
-def scribe_if(tree, indent):
+def scribe_conditional(tree, indent):
     yield " " * indent
     yield "if"
     yield " "
-    yield from scribe_helper(tree["condition"], indent)
+    yield from scribe_helper(tree["if"]["condition"], indent)
     yield " "
     yield "then"
     yield "\n"
+    yield from scribe_helper(tree["if"]["body"], indent + 4)
 
-    yield from scribe_helper(tree["body"], indent + 4)
+    for branch in tree["else if"]:
+        yield " " * indent
+        yield "elseif"
+        yield " "
+        yield from scribe_helper(branch["condition"], indent)
+        yield " "
+        yield "then"
+        yield "\n"
+        yield from scribe_helper(branch["body"], indent + 4)
+
+    if tree["else"]["body"] != []:
+        yield " " * indent
+        yield "else"
+        yield "\n"
+        yield from scribe_helper(tree["else"]["body"], indent + 4)
 
     yield " " * indent
     yield "end"
@@ -66,10 +81,9 @@ def scribe_function(tree, indent):
     yield " " * indent
     yield "function"
     yield " "
-    yield tree["name"]["name"]
+    yield tree["name"]
     yield "("
-    # for arg in tree["args"]:
-    #    yield from scribe_helper(arg)
+    yield ", ".join("".join(scribe_helper(arg, indent=0)) for arg in tree["args"])
     yield ") do\n"
 
     yield from scribe_helper(tree["body"], indent + 4)
@@ -89,8 +103,8 @@ def scribe_helper(tree, indent):
         yield from scribe_function(tree, indent)
         return
 
-    if tree["node"] == "if":
-        yield from scribe_if(tree, indent)
+    if tree["node"] == "conditional":
+        yield from scribe_conditional(tree, indent)
         return
 
     if tree["node"] == "for":
@@ -113,9 +127,24 @@ def scribe_helper(tree, indent):
         yield from scribe_literal(tree)
         return
 
-    yield f"ERROR: {tree['node']}\n"
+    yield f"writer.py ERROR: {tree['node']}\n"
+
+
+def sort_imports(imports):
+    # TODO: will eventually be a more sophisticated scheme, like isort
+    return sorted(imports)
 
 
 def scribe(tree):
-    out = list(scribe_helper(tree, indent=0))
-    return "".join(out)
+    out = []
+
+    for i in sort_imports(tree["imports"]):
+        out.append(f'local {i} = require "{i}"\n')
+    out.append("\n\n")
+
+    for v in tree["functions"].values():
+        out.extend(scribe_helper(v, indent=0))
+
+    out = "".join(out)
+    out = out.strip("\n") + "\n"
+    return out

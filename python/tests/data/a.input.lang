@@ -1,0 +1,19 @@
+language: 0.1.0
+
+import aaa
+import bbb
+import ccc
+
+fn something(a, b):
+    return 4
+
+fn something_else_2(a, b):
+    if aaa:
+        a = b
+        return 7
+    else if 30:
+        return 2
+    else:
+        c = 40
+        return 3
+    return 444

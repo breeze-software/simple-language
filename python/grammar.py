@@ -1,6 +1,12 @@
 grammar = r"""
-source = eol* (func_def (eol* func_def)*)? eol*
-func_def = func_signature eol indent eol body dedent eol
+source = stmt_version eol* stmt_import* eol* func_def* eol*
+
+stmt_version = "language:" whitespace+ version_num  whitespace* eol
+version_num = ~r"[0-9]+[.][0-9]+[.][0-9]+"
+
+stmt_import = "import" whitespace+ var eol
+
+func_def = func_signature eol indent eol body dedent eol+
 func_signature = "fn" whitespace+ var whitespace* "(" func_args "):" whitespace*
 
 func_args = (var (comma whitespace* var whitespace*)*)?
@@ -17,13 +23,13 @@ for_signature = "for" whitespace+ assign_target whitespace+ "in" whitespace+ var
 
 if = if_block elseif_block* else_block?
 
-if_block = if_signature eol indent eol body dedent eol
+if_block = if_signature eol indent eol body dedent eol+
 if_signature = "if" whitespace+ expr whitespace* ":" whitespace*
 
-elseif_block = elseif_signature eol indent eol body dedent eol
+elseif_block = elseif_signature eol indent eol body dedent eol+
 elseif_signature = "else if" whitespace+ expr whitespace* ":" whitespace*
 
-else_block = else_signature eol indent eol body dedent eol
+else_block = else_signature eol indent eol body dedent eol+
 else_signature = "else" whitespace* ":" whitespace*
 
 assign_target = var

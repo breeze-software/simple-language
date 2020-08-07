@@ -3,8 +3,21 @@ from parsimonious.nodes import NodeVisitor
 
 class SourceVisitor(NodeVisitor):
     def visit_source(self, node, visited_children):
-        v = visited_children
-        return [v[1][0][0]] + [e[1] for e in v[1][0][1]]
+        out = {"language_version": visited_children[0], "functions": {}, "imports": []}
+        for e in visited_children[2]:
+            out["imports"].append(e["name"])
+        for e in visited_children[4]:
+            out["functions"][e["name"]] = e
+        return out
+
+    def visit_stmt_import(self, _, v):
+        return v[2]
+
+    def visit_stmt_version(self, _, v):
+        return v[2]
+
+    def visit_version_num(self, node, _):
+        return [int(n) for n in node.text.split(".")]
 
     def visit_func_def(self, node, visited_children):
         out = visited_children[0]
@@ -14,12 +27,12 @@ class SourceVisitor(NodeVisitor):
     def visit_func_signature(self, node, visited_children):
         return {
             "node": "function",
-            "name": visited_children[2],
+            "name": visited_children[2]["name"],
             "args": visited_children[5],
         }
 
     def visit_body(self, node, visited_children):
-        return visited_children[0]
+        return visited_children
 
     def visit_block(self, _, visited_children):
         return visited_children[0]

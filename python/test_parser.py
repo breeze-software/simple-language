@@ -19,49 +19,6 @@ def test_variable():
     assert output == expected
 
 
-def test__function_signature__minimal():
-    data = "fn abc():"
-    expected = {
-        "args": [],
-        "name": {"name": "abc", "node": "variable"},
-        "node": "function",
-    }
-
-    grammar = parser.read_grammar()
-    output = parser.parse(grammar, data, entry="func_signature")
-    assert output == expected
-
-
-def test__function_signature__single_arg():
-    data = "fn abc(a):"
-    expected = {
-        "args": [{"name": "a", "node": "variable"}],
-        "name": {"name": "abc", "node": "variable"},
-        "node": "function",
-    }
-
-    grammar = parser.read_grammar()
-    output = parser.parse(grammar, data, entry="func_signature")
-    assert output == expected
-
-
-def test__function_signature__multiple_args():
-    data = "fn abc(a, b, c):"
-    expected = {
-        "args": [
-            {"name": "a", "node": "variable"},
-            {"name": "b", "node": "variable"},
-            {"name": "c", "node": "variable"},
-        ],
-        "name": {"name": "abc", "node": "variable"},
-        "node": "function",
-    }
-
-    grammar = parser.read_grammar()
-    output = parser.parse(grammar, data, entry="func_signature")
-    assert output == expected
-
-
 def test__for_signature__basic():
     data = "for a in b:"
     expected = {

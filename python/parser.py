@@ -18,27 +18,9 @@ def read_code():
 
 
 def parse(grammar, source, entry="source"):
+    source = pre.insert_brackets(source)
+
     tree = grammar[entry].parse(source)
     sv = SourceVisitor()
     output = sv.visit(tree)
     return output
-
-
-if __name__ == "__main__":
-    print("-" * 20)
-    data = read_code()
-    print(data)
-
-    print("-" * 20)
-    data = pre.insert_brackets(data)
-    print(data)
-
-    print("\n\n\n")
-    print("-" * 20)
-    grammar = read_grammar()
-    output = parse(grammar, data)
-    pprint(output)
-
-    print("-" * 20)
-    print(writer.scribe(output))
-    print("-" * 20)

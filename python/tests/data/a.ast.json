@@ -1,0 +1,134 @@
+{
+  "language_version": [0, 1, 0],
+  "imports": ["aaa", "bbb", "ccc"],
+  "functions": {
+    "something": {
+      "node": "function",
+      "name": "something",
+      "args": [
+        { "name": "a", "node": "variable" },
+        { "name": "b", "node": "variable" }
+      ],
+      "body": [
+        [
+          {
+            "from": [
+              {
+                "node": "literal",
+                "value": 4
+              }
+            ],
+            "node": "return"
+          }
+        ]
+      ]
+    },
+    "something_else_2": {
+      "node": "function",
+      "name": "something_else_2",
+      "args": [
+        { "name": "a", "node": "variable" },
+        { "name": "b", "node": "variable" }
+      ],
+      "body": [
+        [
+          {
+            "else": {
+              "body": [
+                [
+                  {
+                    "from": {
+                      "node": "literal",
+                      "value": 40
+                    },
+                    "node": "assign",
+                    "to": {
+                      "name": "c",
+                      "node": "variable"
+                    }
+                  }
+                ],
+                [
+                  {
+                    "from": [
+                      {
+                        "node": "literal",
+                        "value": 3
+                      }
+                    ],
+                    "node": "return"
+                  }
+                ]
+              ]
+            },
+            "else if": [
+              {
+                "body": [
+                  [
+                    {
+                      "from": [
+                        {
+                          "node": "literal",
+                          "value": 2
+                        }
+                      ],
+                      "node": "return"
+                    }
+                  ]
+                ],
+                "condition": {
+                  "node": "literal",
+                  "value": 30
+                }
+              }
+            ],
+            "if": {
+              "body": [
+                [
+                  {
+                    "from": {
+                      "name": "b",
+                      "node": "variable"
+                    },
+                    "node": "assign",
+                    "to": {
+                      "name": "a",
+                      "node": "variable"
+                    }
+                  }
+                ],
+                [
+                  {
+                    "from": [
+                      {
+                        "node": "literal",
+                        "value": 7
+                      }
+                    ],
+                    "node": "return"
+                  }
+                ]
+              ],
+              "condition": {
+                "name": "aaa",
+                "node": "variable"
+              }
+            },
+            "node": "conditional"
+          }
+        ],
+        [
+          {
+            "from": [
+              {
+                "node": "literal",
+                "value": 444
+              }
+            ],
+            "node": "return"
+          }
+        ]
+      ]
+    }
+  }
+}
