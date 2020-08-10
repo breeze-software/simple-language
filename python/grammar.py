@@ -32,16 +32,24 @@ elseif_signature = "else if" whitespace+ expr whitespace* ":" whitespace*
 else_block = else_signature eol indent eol body dedent eol+
 else_signature = "else" whitespace* ":" whitespace*
 
-assign_target = var
+assign_target = target_list / var / target_string
 
-expr = expr_add_sub / value
+target_list = "[" target_list_wildcard (comma whitespace* target_list_wildcard)* "]"
+target_list_wildcard = (double_asterisk)? var
 
-expr_add_sub = value whitespace* (add / sub) whitespace* value whitespace*
+target_string = (var / string_literal) whitespace* (whitespace* comma whitespace* (var / string_literal) whitespace*)* whitespace*
+
+expr = expr_add_sub / expr_add_sub
+
+expr_add_sub = value (whitespace* (add / sub) whitespace* expr_mult_div)* whitespace*
+expr_mult_div = value (whitespace* (mult / div) whitespace* value)* whitespace*
 
 list = "[" whitespace* list_contents whitespace* "]"
 list_contents = (var (tail_arg)*)?
 tail_arg = comma whitespace* value whitespace*
 
+string_literal = '"' ~r'[^"]*' '"'
+double_asterisk = "**"
 add = "+"
 sub = "-"
 mult = "*"

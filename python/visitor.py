@@ -1,6 +1,16 @@
 from parsimonious.nodes import NodeVisitor
 
 
+def zip_arithmetic(head, ops, values):
+    if len(ops) == 0:
+        return head
+    return {
+        "node": ops[0],
+        "left": head,
+        "right": zip_arithmetic(values[0], ops[1:], values[1:]),
+    }
+
+
 class SourceVisitor(NodeVisitor):
     def visit_source(self, node, visited_children):
         out = {"language_version": visited_children[0], "functions": {}, "imports": []}
@@ -49,6 +59,26 @@ class SourceVisitor(NodeVisitor):
             "to": visited_children[0],
             "from": visited_children[4][0][0],
         }
+
+    def visit_assign_target(self, _, v):
+        return v[0]
+
+    def visit_target_list(self, _, v):
+        return {"node": "target_list", "elements": [v[1]] + [e[2] for e in v[2]]}
+
+    def visit_target_string(self, _, v):
+        return {
+            "node": "target_string",
+            "elements": [v[0][0]] + [e[3][0] for e in v[2]],
+        }
+
+    def visit_string_literal(self, _, v):
+        return {"node": "literal", "value": v[1].text}
+
+    def visit_target_list_wildcard(self, _, v):
+        if isinstance(v[0], list):
+            v[1]["node"] = "wildcard"
+        return v[1]
 
     def visit_for(self, node, visited_children):
         out = visited_children[0]
@@ -125,18 +155,55 @@ class SourceVisitor(NodeVisitor):
     def visit_var(self, node, visited_children):
         return {"node": "variable", "name": node.text}
 
+    def visit_value(self, node, visited_children):
+        return visited_children[0]
+
     def visit_int_literal(self, node, visited_children):
         return {"node": "literal", "value": int(node.text)}
 
+    def visit_expr(self, node, v):
+        return v[0]
+
     def visit_expr_add_sub(self, node, visited_children):
-        return {
-            "node": visited_children[2][0],
-            "left": visited_children[0],
-            "right": visited_children[4],
-        }
+        values = [visited_children[0]] + [e[3] for e in visited_children[1]]
+        ops = [e[1][0] for e in visited_children[1]]
+
+        # return {"STUFF": [values, ops]}
+
+        return zip_arithmetic(values[0], ops, values[1:])
+
+        out = values[-1]
+        for op, val in reversed(list(zip(ops, values))):
+            out = {"node": op[0], "left": val, "right": out}
+        return out
+
+    def visit_expr_mult_div(self, node, visited_children):
+        values = [visited_children[0]] + [e[3] for e in visited_children[1]]
+        ops = [e[1][0] for e in visited_children[1]]
+
+        # return {"STUFF": [values, ops]}
+
+        return zip_arithmetic(values[0], ops, values[1:])
+
+        out = values[-1]
+        for op, val in reversed(list(zip(ops, values))):
+            out = {"node": op[0], "left": val, "right": out}
+        return out
+
+    def visit_double_asterisk(self, node, visited_children):
+        return "**"
 
     def visit_add(self, node, visited_children):
         return "+"
+
+    def visit_sub(self, node, visited_children):
+        return "-"
+
+    def visit_mult(self, node, visited_children):
+        return "*"
+
+    def visit_div(self, node, visited_children):
+        return "/"
 
     def visit_comma(self, node, visited_children):
         return node.text
